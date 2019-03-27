@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjl.onrefectory.mapper.AdminMapper">
+	<resultMap id="baseMap" type="com.cjl.onrefectory.po.Admin">
+		<id property="id" column="id" />
+		<result property="name" column="name" />
+		<result property="gender" column="gender" />
+		<result property="email" column="email" />
+		<result property="tel" column="tel" />
+		<result property="role" column="role" />
+		<result property="pwd" column="pwd" />
+		<result property="createTime" column="create_time" />
+	</resultMap>
+	
+	<insert id="insert" parameterType="com.cjl.onrefectory.po.Admin">
+		insert into tb_admin(name,gender,email,tel,role,pwd) values
+			(#{name},#{gender},#{email},#{tel},#{role},#{pwd})
+	</insert>
+	<select id="getAdminByTel" resultMap="baseMap">
+		select id,name,gender,email,tel,role,pwd,create_time from tb_admin where tel=#{tel} 
+	</select>
+	<select id="adminListCount" resultType="int">
+		select count(*) from tb_admin
+		<bind name="keywords" value="'%' + keyword + '%'"/>
+		<where>
+			<if test="keyword != ''">
+				name like #{keywords} or
+				tel like #{keywords} or
+				email like #{keywords} or
+				role like #{keywords}
+			</if>
+		</where>
+	</select>
+	<select id="adminList" resultMap ="baseMap">
+		select id,name,gender,email,tel,role,pwd,create_time  from tb_admin
+		<bind name="keywords" value="'%' + keyword + '%'"/>
+		<where>
+			<if test="keyword != ''">
+				name like #{keywords} or
+				tel like #{keywords} or
+				email like #{keywords} or
+				role like #{keywords}
+			</if>
+		</where>
+		limit #{begin},#{pageSize}
+	</select>
+	<select id="getAdminById" resultMap="baseMap">
+		select id,name,gender,email,tel,role,pwd,create_time from tb_admin where id=#{id} 
+	</select>
+	<update id="updateById" parameterType="com.cjl.onrefectory.po.Admin">
+		update tb_admin
+		<set>
+			<if test="name != null">
+				name=#{name},
+			</if>
+			<if test="gender != 2">
+				gender=#{gender},
+			</if>
+			<if test="tel != null">
+				tel=#{tel},
+			</if>
+			<if test="email != null">
+				email=#{email}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	<delete id="deleteById">
+		delete from tb_admin where id=#{id}
+	</delete>
+	
+	<select id="list" resultMap="baseMap">
+		select id,name,gender,email,tel,role,pwd,create_time  from tb_admin
+	</select>
+</mapper>

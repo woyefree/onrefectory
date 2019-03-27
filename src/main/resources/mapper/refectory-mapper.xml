@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjl.onrefectory.mapper.RefectoryMapper">
+	
+	<resultMap id="baseMap" type="com.cjl.onrefectory.po.Refectory">
+		<id property="id" column="id" />
+		<result property="admin.id" column="admin_id" />
+		<result property="desc" column="desc" />
+		<result property="tel" column="tel" />
+		<result property="createTime" column="create_time" />
+	</resultMap>
+	
+	<resultMap id="baseMap2" type="com.cjl.onrefectory.po.Refectory">
+		<id property="id" column="id" />
+		<result property="admin.name" column="name" />
+		<result property="desc" column="desc" />
+		<result property="tel" column="tel" />
+		<result property="createTime" column="create_time" />
+	</resultMap>
+	
+	<insert id="insert" parameterType="com.cjl.onrefectory.po.Refectory">
+		insert into tb_refectory(admin_id,`desc`,tel) values
+			(#{admin.id},#{desc},#{tel})
+	</insert>
+	
+	<select id="getRefectoryByTel" resultMap="baseMap">
+		select id,admin_id,`desc`,tel,create_time from tb_refectory where tel=#{tel} 
+	</select>
+	
+	<select id="refectoryListCount" resultType="int">
+		select count(*) from tb_refectory r join tb_admin a on r.admin_id = a.id
+		<bind name="keywords" value="'%' + keyword + '%'"/>
+		<where>
+			<if test="keyword != ''">
+				r.desc like #{keywords} or
+				a.name like #{keywords}
+			</if>
+		</where>
+	</select>
+	<select id="refectoryList" resultMap ="baseMap2">
+		select r.id,a.name,r.desc,r.tel,r.create_time from tb_refectory r join tb_admin a on r.admin_id = a.id
+		<bind name="keywords" value="'%' + keyword + '%'"/>
+		<where>
+			<if test="keyword != ''">
+				r.desc like #{keywords} or
+				a.name like #{keywords}
+			</if>
+		</where>
+		limit #{begin},#{pageSize}
+	</select>
+	
+	<select id="getRefectoryById" resultMap="baseMap">
+		select id,admin_id,`desc`,tel,create_time from tb_refectory where id=#{id}
+	</select>
+	
+	<update id="updateById" parameterType="com.cjl.onrefectory.po.Refectory">
+		update tb_refectory
+		<set>
+			<if test="admin != null">
+				admin_id=#{admin.id},
+			</if>
+			<if test="desc != null">
+				`desc`=#{desc},
+			</if>
+			<if test="tel != null">
+				tel=#{tel}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<delete id="deleteById">
+		delete from tb_refectory where id=#{id}
+	</delete>
+</mapper>
